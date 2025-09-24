@@ -7,17 +7,33 @@ def process_pengembalian(buku, mahasiswa):
         # 1. Validasi mahasiswa
         # TODO: melakukan pengecekan apakah nama mahasiswa ada dalam dictionary buku, kemudian
         #    return (judul, "Gagal", "Mahasiswa tidak terdaftar")
-
+        if nama not in mahasiswa:
+            return (judul, "Gagal", "Mahasiswa tidak terdaftar")
+        else:
+            if mahasiswa[nama].get("pinjaman", []) is None:
+                mahasiswa[nama]["pinjaman"] = []
+                mahasiswa[nama]["pinjaman"].append(judul)
         # 2. Validasi judul buku
         # TODO: melakukan pengecekan apakah judul ada dalam dictionary buku, kemudian
         #    return (judul, "Gagal", "Judul tidak ditemukan")
-
+        if judul not in buku:
+            return (judul, "Gagal", "Judul tidak ditemukan")
+        else:
+            if buku[judul].get("stok", 0) is None:
+                buku[judul]["stok"] = 0
+                buku[judul]["status"] = "Kosong"
         # 3. TODO: cek apakah buku tercatat sedang dipinjam oleh mahasiswa
         # hint: gunakan if judul in mahasiswa[nama].get("pinjaman", [])
         # jika iya: hapus dari daftar pinjaman
         # lalu tambahkan stok buku +1
         # jika status buku sebelumnya "Kosong", ubah menjadi "Tersedia"
             # return (judul, "Berhasil", None)
+        if judul in mahasiswa[nama].get("pinjaman", []):
+            mahasiswa[nama].update({"pinjaman":[]})
+            buku[judul]["stok"] += 1
+            if buku[judul]["stok"] > 0:
+                buku[judul]["status"] = "Tersedia"
+                return (judul, "Berhasil", None)
 
         # 4. Jika tidak ada di daftar pinjaman
         return (judul, "Gagal", "Tidak tercatat sebagai pinjaman")
